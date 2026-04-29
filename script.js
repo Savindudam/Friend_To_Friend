@@ -4,17 +4,18 @@ function updateClock() {
   const now = new Date();
   el.textContent = now.toLocaleTimeString('en-US', { hour12: false });
 }
+
 setInterval(updateClock, 1000);
 updateClock();
 
 const navItems = document.querySelectorAll('.nav-item');
-const panels   = document.querySelectorAll('.panel');
-const pathEl   = document.getElementById('topbarPath');
+const panels = document.querySelectorAll('.panel');
+const pathEl = document.getElementById('topbarPath');
 
 const pathMap = {
   encrypt: '// encrypt-message //',
   decrypt: '// decrypt-message //',
-  report:  '// report-bug //',
+  report: '// report-bug //',
 };
 
 navItems.forEach(btn => {
@@ -33,9 +34,9 @@ navItems.forEach(btn => {
   });
 });
 
-const sidebar    = document.getElementById('sidebar');
+const sidebar = document.getElementById('sidebar');
 const menuToggle = document.getElementById('menuToggle');
-const overlay    = document.getElementById('overlay');
+const overlay = document.getElementById('overlay');
 
 menuToggle.addEventListener('click', () => {
   sidebar.classList.toggle('open');
@@ -53,15 +54,12 @@ document.querySelectorAll('.toggle-pass').forEach(btn => {
   btn.addEventListener('click', () => {
     const input = document.getElementById(btn.dataset.target);
     if (!input) return;
-    const img = btn.querySelector('.eye-icon');
     if (input.type === 'password') {
       input.type = 'text';
-      img.src = 'pics/close.png';
-      img.alt = 'hide password';
+      btn.textContent = 'X';
     } else {
       input.type = 'password';
-      img.src = 'pics/open.png';
-      img.alt = 'show password';
+      btn.textContent = 'V';
     }
   });
 });
@@ -72,46 +70,85 @@ if (copyBtn) {
     const code = document.getElementById('generatedId').textContent;
     if (!code || code === '-') return;
     navigator.clipboard.writeText(code).then(() => {
+      const originalText = copyBtn.textContent;
       copyBtn.textContent = 'Copied!';
-      setTimeout(() => { copyBtn.textContent = 'Copy ID'; }, 2000);
+      setTimeout(() => { copyBtn.textContent = originalText; }, 2000);
     });
   });
 }
 
-document.getElementById('encryptBtn').addEventListener('click', () => {
+function generateId() {
+  return 'ENC_' + Math.random().toString(36).substring(2, 15).toUpperCase() + '_' + Date.now();
+}
+
+function encryptMessage(message, password) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(message);
+  const binaryString = String.fromCharCode.apply(null, data);
+  return btoa(binaryString);
+}
+
+document.getElementById('encryptBtn').addEventListener('click', async () => {
   const msg = document.getElementById('encryptMsg').value.trim();
-  if (!msg) return shake(document.getElementById('encryptMsg'));
+  const pass = document.getElementById('encryptPass').value.trim();
+  
+  if (!msg) {
+    shake(document.getElementById('encryptMsg'));
+    return;
+  }
+
   showLoader('encryptBtn', true);
-  setTimeout(() => {
+  
+  try {
+    const messageId = generateId();
+    const encryptedMessage = encryptMessage(msg, pass);
+    
+    const messageData = {
+      message: encryptedMessage,
+      password: pass || null,
+      timestamp: Date.now(),
+      encrypted: true
+    };
+
+    await database.ref('messages/' + messageId).set(messageData);
+
     showLoader('encryptBtn', false);
-    document.getElementById('generatedId').textContent = 'FIREBASE_ID_HERE';
+    document.getElementById('generatedId').textContent = messageId;
     document.getElementById('encryptResult').classList.remove('hidden');
-  }, 800);
+    
+    document.getElementById('encryptMsg').value = '';
+    document.getElementById('encryptPass').value = '';
+    
+  } catch (error) {
+    showLoader('encryptBtn', false);
+    alert('Error: ' + error.message);
+  }
 });
 
 document.getElementById('decryptBtn').addEventListener('click', () => {
-  const id = document.getElementById('decryptId').value.trim();
-  if (!id) return shake(document.getElementById('decryptId'));
-  showLoader('decryptBtn', true);
-  setTimeout(() => {
-    showLoader('decryptBtn', false);
-    document.getElementById('decryptedMsg').textContent = 'Your decrypted message will appear here once Firebase is connected.';
-    document.getElementById('decryptResult').classList.remove('hidden');
-  }, 800);
+  alert('Decryption feature coming soon');
 });
 
 document.getElementById('reportBtn').addEventListener('click', () => {
   const title = document.getElementById('bugTitle').value.trim();
-  const desc  = document.getElementById('bugDesc').value.trim();
-  if (!title) return shake(document.getElementById('bugTitle'));
-  if (!desc)  return shake(document.getElementById('bugDesc'));
+  const desc = document.getElementById('bugDesc').value.trim();
+  
+  if (!title) {
+    shake(document.getElementById('bugTitle'));
+    return;
+  }
+  if (!desc) {
+    shake(document.getElementById('bugDesc'));
+    return;
+  }
+  
   showLoader('reportBtn', true);
   setTimeout(() => {
     showLoader('reportBtn', false);
     document.getElementById('reportResult').classList.remove('hidden');
     document.getElementById('bugTitle').value = '';
-    document.getElementById('bugDesc').value  = '';
-  }, 800);
+    document.getElementById('bugDesc').value = '';
+  }, 1200);
 });
 
 document.getElementById('deleteBtn').addEventListener('click', () => {
@@ -120,12 +157,15 @@ document.getElementById('deleteBtn').addEventListener('click', () => {
 });
 
 function showLoader(btnId, loading) {
-  const btn    = document.getElementById(btnId);
-  const text   = btn.querySelector('.btn-text');
-  const loader = btn.querySelector('.btn-loader');
-  text.classList.toggle('hidden', loading);
-  loader.classList.toggle('hidden', !loading);
-  btn.disabled = loading;
+  const btn = document.getElementById(btnId);
+  if (loading) {
+    btn.dataset.originalText = btn.textContent;
+    btn.textContent = 'Loading...';
+    btn.disabled = true;
+  } else {
+    btn.textContent = btn.dataset.originalText || btn.textContent;
+    btn.disabled = false;
+  }
 }
 
 function shake(el) {
@@ -136,6 +176,13 @@ function shake(el) {
   el.focus();
 }
 
-const shakeStyle = document.createElement('style');
-shakeStyle.textContent = '@keyframes shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-6px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(4px); } }';
-document.head.appendChild(shakeStyle);
+document.querySelectorAll('.severity-opt input[type="radio"]').forEach(radio => {
+  radio.addEventListener('change', () => {
+    document.querySelectorAll('.severity-opt').forEach(opt => {
+      opt.classList.remove('checked');
+    });
+    radio.parentElement.classList.add('checked');
+  });
+});
+
+document.querySelector('.severity-opt').classList.add('checked');
