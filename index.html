@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Friend-To-Friend</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="noise"></div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-icon">&#x2B21;</span>
+      <span class="brand-name">Friend-To-Friend</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-panel="encrypt">
+        <span class="nav-icon">&#x21E1;</span>
+        <span class="nav-label">Encrypt Message</span>
+        <span class="nav-tag">NEW ID</span>
+      </button>
+      <button class="nav-item" data-panel="decrypt">
+        <span class="nav-icon">&#x21E3;</span>
+        <span class="nav-label">Decrypt Message</span>
+        <span class="nav-tag">RETRIEVE</span>
+      </button>
+      <button class="nav-item" data-panel="report">
+        <span class="nav-icon">&#x2691;</span>
+        <span class="nav-label">Report Bugs</span>
+        <span class="nav-tag">ISSUE</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <span class="status-dot"></span>
+      <span class="status-text">SYSTEM ONLINE</span>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <header class="topbar">
+      <button class="menu-toggle" id="menuToggle">&#9776;</button>
+      <div class="topbar-path" id="topbarPath">// encrypt-message</div>
+      <div class="topbar-time" id="topbarTime"></div>
+    </header>
+
+    <section class="panel active" id="panel-encrypt">
+      <div class="panel-inner">
+        <div class="panel-header">
+          <h1 class="panel-title">Encrypt <span class="accent">Message</span></h1>
+          <p class="panel-sub">Your message is stored securely. Share the generated ID to grant access.</p>
+        </div>
+
+        <div class="form-block">
+          <label class="field-label">MESSAGE</label>
+          <textarea class="field-input" id="encryptMsg" placeholder="Type your secret message here..." rows="6"></textarea>
+        </div>
+
+        <div class="form-block">
+          <label class="field-label">PASSWORD <span class="optional">(optional)</span></label>
+          <div class="input-row">
+            <input type="password" class="field-input" id="encryptPass" placeholder="Set a password for extra protection" />
+            <button class="toggle-pass" data-target="encryptPass">
+              <img src="pics/open.png" alt="show password" class="eye-icon" />
+            </button>
+          </div>
+        </div>
+
+        <button class="btn-primary" id="encryptBtn">
+          <span class="btn-text">Generate Secure ID</span>
+          <span class="btn-loader hidden">encrypting...</span>
+        </button>
+
+        <div class="result-box hidden" id="encryptResult">
+          <div class="result-label">YOUR SECRET ID</div>
+          <div class="result-code" id="generatedId">-</div>
+          <button class="btn-copy" id="copyBtn">Copy ID</button>
+          <p class="result-note">Save this ID. It cannot be recovered if lost.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-decrypt">
+      <div class="panel-inner">
+        <div class="panel-header">
+          <h1 class="panel-title">Decrypt <span class="accent">Message</span></h1>
+          <p class="panel-sub">Enter a valid ID to retrieve the stored message. Password required if one was set.</p>
+        </div>
+
+        <div class="form-block">
+          <label class="field-label">SECRET ID</label>
+          <input type="text" class="field-input mono" id="decryptId" placeholder="Paste the message ID here" />
+        </div>
+
+        <div class="form-block">
+          <label class="field-label">PASSWORD <span class="optional">(if required)</span></label>
+          <div class="input-row">
+            <input type="password" class="field-input" id="decryptPass" placeholder="Enter password if set" />
+            <button class="toggle-pass" data-target="decryptPass">
+              <img src="pics/open.png" alt="show password" class="eye-icon" />
+            </button>
+          </div>
+        </div>
+
+        <button class="btn-primary" id="decryptBtn">
+          <span class="btn-text">Retrieve Message</span>
+          <span class="btn-loader hidden">retrieving...</span>
+        </button>
+
+        <div class="result-box hidden" id="decryptResult">
+          <div class="result-label">DECRYPTED MESSAGE</div>
+          <div class="decrypted-msg" id="decryptedMsg"></div>
+          <button class="btn-danger" id="deleteBtn">Delete Message</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-report">
+      <div class="panel-inner">
+        <div class="panel-header">
+          <h1 class="panel-title">Report <span class="accent">Bug</span></h1>
+          <p class="panel-sub">Found something broken? Tell us what happened and we will fix it.</p>
+        </div>
+
+        <div class="form-block">
+          <label class="field-label">BUG TITLE</label>
+          <input type="text" class="field-input" id="bugTitle" placeholder="Short description of the issue" />
+        </div>
+
+        <div class="form-block">
+          <label class="field-label">STEPS TO REPRODUCE</label>
+          <textarea class="field-input" id="bugDesc" placeholder="1. I went to...&#10;2. I clicked...&#10;3. This happened..." rows="5"></textarea>
+        </div>
+
+        <div class="form-block">
+          <label class="field-label">SEVERITY</label>
+          <div class="severity-row">
+            <label class="severity-opt">
+              <input type="radio" name="severity" value="low" checked />
+              <span>Low</span>
+            </label>
+            <label class="severity-opt">
+              <input type="radio" name="severity" value="medium" />
+              <span>Medium</span>
+            </label>
+            <label class="severity-opt">
+              <input type="radio" name="severity" value="high" />
+              <span>High</span>
+            </label>
+            <label class="severity-opt critical">
+              <input type="radio" name="severity" value="critical" />
+              <span>Critical</span>
+            </label>
+          </div>
+        </div>
+
+        <button class="btn-primary" id="reportBtn">
+          <span class="btn-text">Submit Report</span>
+          <span class="btn-loader hidden">sending...</span>
+        </button>
+
+        <div class="result-box hidden" id="reportResult">
+          <div class="result-label">REPORT RECEIVED</div>
+          <div class="result-code" style="font-size:1rem; letter-spacing:0;">Thank you. We will investigate this issue shortly.</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="overlay hidden" id="overlay"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
