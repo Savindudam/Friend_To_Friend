@@ -85,23 +85,23 @@
         <div class="panel-inner">
           <div class="panel-header">
             <h1 class="panel-title">Decrypt <span class="accent">Message</span></h1>
-            <p class="panel-sub">Decryption feature coming soon.</p>
+            <p class="panel-sub">Enter the secret ID and password to retrieve your message.</p>
           </div>
 
           <div class="form-block">
             <label class="field-label">SECRET ID</label>
-            <input type="text" class="field-input mono" id="decryptId" placeholder="Paste the message ID here" disabled>
+            <input type="text" class="field-input mono" id="decryptId" placeholder="Paste the message ID here">
           </div>
 
           <div class="form-block">
             <label class="field-label">PASSWORD <span class="optional">(if required)</span></label>
             <div class="input-row">
-              <input type="password" class="field-input" id="decryptPass" placeholder="Enter password if set" disabled>
-              <button class="toggle-pass" data-target="decryptPass" disabled>V</button>
+              <input type="password" class="field-input" id="decryptPass" placeholder="Enter password if set">
+              <button class="toggle-pass" data-target="decryptPass">V</button>
             </div>
           </div>
 
-          <button class="btn-primary" id="decryptBtn" disabled>Retrieve Message</button>
+          <button class="btn-primary" id="decryptBtn">Retrieve Message</button>
 
           <div class="result-box hidden" id="decryptResult">
             <div class="result-label">DECRYPTED MESSAGE</div>

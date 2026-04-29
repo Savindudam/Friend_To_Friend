@@ -125,8 +125,48 @@ document.getElementById('encryptBtn').addEventListener('click', async () => {
   }
 });
 
-document.getElementById('decryptBtn').addEventListener('click', () => {
-  alert('Decryption feature coming soon');
+document.getElementById('decryptBtn').addEventListener('click', async () => {
+  const id = document.getElementById('decryptId').value.trim();
+  const pass = document.getElementById('decryptPass').value.trim();
+
+  if (!id) {
+    shake(document.getElementById('decryptId'));
+    return;
+  }
+
+  showLoader('decryptBtn', true);
+
+  try {
+    const snapshot = await database.ref('messages/' + id).get();
+
+    if (!snapshot.exists()) {
+      showLoader('decryptBtn', false);
+      shake(document.getElementById('decryptId'));
+      alert('No message found for that ID.');
+      return;
+    }
+
+    const data = snapshot.val();
+
+    if (data.password && data.password !== pass) {
+      showLoader('decryptBtn', false);
+      shake(document.getElementById('decryptPass'));
+      alert('Incorrect password.');
+      return;
+    }
+
+    const decoded = atob(data.message);
+    const bytes = Uint8Array.from(decoded, c => c.charCodeAt(0));
+    const originalMessage = new TextDecoder().decode(bytes);
+
+    showLoader('decryptBtn', false);
+    document.getElementById('decryptedMsg').textContent = originalMessage;
+    document.getElementById('decryptResult').classList.remove('hidden');
+
+  } catch (error) {
+    showLoader('decryptBtn', false);
+    alert('Error: ' + error.message);
+  }
 });
 
 document.getElementById('reportBtn').addEventListener('click', () => {
@@ -153,7 +193,9 @@ document.getElementById('reportBtn').addEventListener('click', () => {
 
 document.getElementById('deleteBtn').addEventListener('click', () => {
   document.getElementById('decryptResult').classList.add('hidden');
+  document.getElementById('decryptedMsg').textContent = '';
   document.getElementById('decryptId').value = '';
+  document.getElementById('decryptPass').value = '';
 });
 
 function showLoader(btnId, loading) {
