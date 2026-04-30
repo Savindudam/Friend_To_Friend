@@ -1,9 +1,0 @@
-.env
-.env.local
-firebase-config.js
-.DS_Store
-Thumbs.db
-.vscode/
-.idea/
-*.log
-config.js
