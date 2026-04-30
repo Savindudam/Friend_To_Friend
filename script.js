@@ -81,28 +81,37 @@ function generateId() {
   return 'ENC_' + Math.random().toString(36).substring(2, 15).toUpperCase() + '_' + Date.now();
 }
 
-function encryptMessage(message, password) {
+function encryptMessage(message) {
   const encoder = new TextEncoder();
   const data = encoder.encode(message);
   const binaryString = String.fromCharCode.apply(null, data);
   return btoa(binaryString);
 }
 
+function decryptMessage(encoded) {
+  const binaryString = atob(encoded);
+  const bytes = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return new TextDecoder().decode(bytes);
+}
+
 document.getElementById('encryptBtn').addEventListener('click', async () => {
   const msg = document.getElementById('encryptMsg').value.trim();
   const pass = document.getElementById('encryptPass').value.trim();
-  
+
   if (!msg) {
     shake(document.getElementById('encryptMsg'));
     return;
   }
 
   showLoader('encryptBtn', true);
-  
+
   try {
     const messageId = generateId();
-    const encryptedMessage = encryptMessage(msg, pass);
-    
+    const encryptedMessage = encryptMessage(msg);
+
     const messageData = {
       message: encryptedMessage,
       password: pass || null,
@@ -115,18 +124,74 @@ document.getElementById('encryptBtn').addEventListener('click', async () => {
     showLoader('encryptBtn', false);
     document.getElementById('generatedId').textContent = messageId;
     document.getElementById('encryptResult').classList.remove('hidden');
-    
+
     document.getElementById('encryptMsg').value = '';
     document.getElementById('encryptPass').value = '';
-    
+
   } catch (error) {
     showLoader('encryptBtn', false);
     alert('Error: ' + error.message);
   }
 });
 
-document.getElementById('decryptBtn').addEventListener('click', () => {
-  alert('Decryption feature coming soon');
+let currentDecryptedId = null;
+
+document.getElementById('decryptBtn').addEventListener('click', async () => {
+  const id = document.getElementById('decryptId').value.trim();
+  const pass = document.getElementById('decryptPass').value.trim();
+
+  if (!id) {
+    shake(document.getElementById('decryptId'));
+    return;
+  }
+
+  showLoader('decryptBtn', true);
+  document.getElementById('decryptResult').classList.add('hidden');
+  currentDecryptedId = null;
+
+  try {
+    const snapshot = await database.ref('messages/' + id).once('value');
+
+    if (!snapshot.exists()) {
+      showLoader('decryptBtn', false);
+      alert('No message found with that ID.');
+      return;
+    }
+
+    const data = snapshot.val();
+
+    if (data.password && data.password !== pass) {
+      showLoader('decryptBtn', false);
+      shake(document.getElementById('decryptPass'));
+      alert('Incorrect password.');
+      return;
+    }
+
+    const plainText = decryptMessage(data.message);
+
+    showLoader('decryptBtn', false);
+    currentDecryptedId = id;
+    document.getElementById('decryptedMsg').textContent = plainText;
+    document.getElementById('decryptResult').classList.remove('hidden');
+
+  } catch (error) {
+    showLoader('decryptBtn', false);
+    alert('Error: ' + error.message);
+  }
+});
+
+document.getElementById('deleteBtn').addEventListener('click', async () => {
+  if (!currentDecryptedId) return;
+
+  try {
+    await database.ref('messages/' + currentDecryptedId).remove();
+    currentDecryptedId = null;
+    document.getElementById('decryptResult').classList.add('hidden');
+    document.getElementById('decryptId').value = '';
+    document.getElementById('decryptPass').value = '';
+  } catch (error) {
+    alert('Error deleting message: ' + error.message);
+  }
 });
 
 document.getElementById('reportBtn').addEventListener('click', async () => {
@@ -168,11 +233,6 @@ document.getElementById('reportBtn').addEventListener('click', async () => {
     showLoader('reportBtn', false);
     alert('Error: ' + error.message);
   }
-});
-
-document.getElementById('deleteBtn').addEventListener('click', () => {
-  document.getElementById('decryptResult').classList.add('hidden');
-  document.getElementById('decryptId').value = '';
 });
 
 function showLoader(btnId, loading) {
