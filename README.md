@@ -37,6 +37,7 @@ This is a learning project aimed at building the foundation for a more advanced 
 
 ## How It Works
 
+<<<<<<< HEAD
 Encryption Process :
 
     User inputs a message
@@ -61,3 +62,8 @@ Decryption process :
 
 
 <developed by Dreamxhava>
+=======
+ With this kind of database encryption method I will make a full working messaging app in the next update.
+
+ ![alt text](image.png)
+>>>>>>> c6bbded (changed the ui of the website)

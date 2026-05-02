@@ -3,172 +3,166 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Friend-To-Friend - Secure Message Sharing</title>
+  <title>Friend-to-Friend</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="noise"></div>
 
 <aside class="sidebar" id="sidebar">
-    <div class="sidebar-brand">
-      <span class="brand-icon">+</span>
-      <span class="brand-name">Friend-To-Friend</span>
+  <div class="sidebar-top">
+    <div class="brand">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+     <rect x="1" y="1" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.5"/>
+     <path d="M6 8h8M6 12h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <span>F2F</span>
     </div>
+  </div>
 
-    <nav class="sidebar-nav">
-      <button class="nav-item active" data-panel="encrypt">
-        <span class="nav-icon">L</span>
-        <span class="nav-label">Encrypt Message</span>
-        <span class="nav-tag">NEW ID</span>
-      </button>
-      <button class="nav-item" data-panel="decrypt">
-        <span class="nav-icon">M</span>
-        <span class="nav-label">Decrypt Message</span>
-        <span class="nav-tag">RETRIEVE</span>
-      </button>
-      <button class="nav-item" data-panel="report">
-        <span class="nav-icon">B</span>
-        <span class="nav-label">Report Bugs</span>
-        <span class="nav-tag">ISSUE</span>
-      </button>
-    </nav>
+  <nav>
+    <button class="nav-item active" data-panel="encrypt">
+      <span class="nav-index">1</span>
+      Encrypt
+    </button>
+    <button class="nav-item" data-panel="decrypt">
+      <span class="nav-index">2</span>
+      Decrypt
+    </button>
+    <button class="nav-item" data-panel="report">
+      <span class="nav-index">3</span>
+      Report
+    </button>
+  </nav>
 
-    <div class="sidebar-footer">
-      <span class="status-dot"></span>
-      <span class="status-text">SYSTEM ONLINE</span>
-    </div>
-  </aside>
+  <div class="sidebar-bottom">
+    <span>End-to-end private</span>
+  </div>
+</aside>
 
-  <main class="main">
-    <header class="topbar">
-      <button class="menu-toggle" id="menuToggle">-</button>
-      <div class="topbar-path" id="topbarPath">// encrypt-message //</div>
-      <div class="topbar-time" id="topbarTime"></div>
-    </header>
+<main class="main">
+  <header class="topbar">
+    <button class="menu-toggle" id="menuToggle">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 5h14M2 9h14M2 13h14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+    </button>
+    <span class="topbar-label" id="topbarPath">Encrypt</span>
+  </header>
 
-    <div class="content">
-      <section class="panel active" id="panel-encrypt">
-        <div class="panel-inner">
-          <div class="panel-header">
-            <h1 class="panel-title">Encrypt <span class="accent">Message</span></h1>
-            <p class="panel-sub">Your message is stored securely. Share the generated ID to grant access.</p>
-          </div>
+  <div class="content">
 
-          <div class="form-block">
-            <label class="field-label">MESSAGE</label>
-            <textarea id="encryptMsg" placeholder="Type your secret message here..."></textarea>
-          </div>
+    <section class="panel active" id="panel-encrypt">
+      <div class="panel-inner">
+        <h1 class="panel-title">Encrypt message</h1>
+      <p class="panel-sub">Store a message privately. Share the ID with whoever needs to read it.</p>
 
-          <div class="form-block">
-            <label class="field-label">PASSWORD <span class="optional">(optional)</span></label>
-            <div class="input-row">
-              <input type="password" class="field-input" id="encryptPass" placeholder="Set a password for extra protection">
-              <button class="toggle-pass" data-target="encryptPass">V</button>
-            </div>
-          </div>
+        <div class="form-block">
+          <label class="field-label">Message</label>
+          <textarea id="encryptMsg" placeholder="Your secret message…"></textarea>
+        </div>
 
-          <button class="btn-primary" id="encryptBtn">Generate Secure ID</button>
-
-          <div class="result-box hidden" id="encryptResult">
-            <div class="result-label">YOUR SECRET ID</div>
-            <div class="result-code" id="generatedId">-</div>
-            <button class="btn-copy" id="copyBtn">Copy ID</button>
-            <p class="result-note">Save this ID. It cannot be recovered if lost.</p>
+        <div class="form-block">
+          <label class="field-label">Password <span class="optional">optional</span></label>
+          <div class="input-row">
+            <input type="password" class="field-input" id="encryptPass" placeholder="Leave blank to skip">
+            <button class="toggle-pass" data-target="encryptPass">Show</button>
           </div>
         </div>
-      </section>
 
-      <section class="panel" id="panel-decrypt">
-        <div class="panel-inner">
-          <div class="panel-header">
-            <h1 class="panel-title">Decrypt <span class="accent">Message</span></h1>
-            <p class="panel-sub">Enter the secret ID and password to retrieve your message.</p>
-          </div>
+        <button class="btn-primary" id="encryptBtn">Generate ID</button>
 
-          <div class="form-block">
-            <label class="field-label">SECRET ID</label>
-            <input type="text" class="field-input mono" id="decryptId" placeholder="Paste the message ID here">
-          </div>
+        <div class="result-box hidden" id="encryptResult">
+          <p class="result-label">Secret ID</p>
+          <div class="result-code" id="generatedId">—</div>
+          <button class="btn-copy" id="copyBtn">Copy ID</button>
+          <p class="result-note">This ID can't be recovered if lost.</p>
+        </div>
+      </div>
+    </section>
 
-          <div class="form-block">
-            <label class="field-label">PASSWORD <span class="optional">(if required)</span></label>
-            <div class="input-row">
-              <input type="password" class="field-input" id="decryptPass" placeholder="Enter password if set">
-              <button class="toggle-pass" data-target="decryptPass">V</button>
-            </div>
-          </div>
+    <section class="panel" id="panel-decrypt">
+      <div class="panel-inner">
+      <h1 class="panel-title">Decrypt message</h1>
+        <p class="panel-sub">Enter the secret ID to retrieve the message.</p>
 
-          <button class="btn-primary" id="decryptBtn">Retrieve Message</button>
+      <div class="form-block">
+          <label class="field-label">Secret ID</label>
+          <input type="text" class="field-input mono" id="decryptId" placeholder="Paste ID here">
+      </div>
 
-          <div class="result-box hidden" id="decryptResult">
-            <div class="result-label">DECRYPTED MESSAGE</div>
-            <div class="decrypted-msg" id="decryptedMsg"></div>
-            <button class="btn-danger" id="deleteBtn">Delete Message</button>
+        <div class="form-block">
+          <label class="field-label">Password <span class="optional">if set</span></label>
+          <div class="input-row">
+            <input type="password" class="field-input" id="decryptPass" placeholder="Leave blank if none">
+            <button class="toggle-pass" data-target="decryptPass">Show</button>
           </div>
         </div>
-      </section>
 
-      <section class="panel" id="panel-report">
-        <div class="panel-inner">
-          <div class="panel-header">
-            <h1 class="panel-title">Report <span class="accent">Bug</span></h1>
-            <p class="panel-sub">Found something broken? Tell us what happened and we will fix it.</p>
-          </div>
+        <button class="btn-primary" id="decryptBtn">Retrieve message</button>
 
-          <div class="form-block">
-            <label class="field-label">BUG TITLE</label>
-            <input type="text" class="field-input" id="bugTitle" placeholder="Short description of the issue">
-          </div>
+        <div class="result-box hidden" id="decryptResult">
+          <p class="result-label">Message</p>
+          <div class="decrypted-msg" id="decryptedMsg"></div>
+         <button class="btn-danger" id="deleteBtn">Delete message</button>
+        </div>
+      </div>
+    </section>
 
-          <div class="form-block">
-            <label class="field-label">STEPS TO REPRODUCE</label>
-            <textarea id="bugDesc" placeholder="1. I went to...&#10;2. I clicked...&#10;3. This happened..."></textarea>
-          </div>
+    <section class="panel" id="panel-report">
+      <div class="panel-inner">
+        <h1 class="panel-title">Report a bug</h1>
+        <p class="panel-sub">Something broken? Let us know and we'll fix it.</p>
 
-          <div class="form-block">
-            <label class="field-label">SEVERITY</label>
-            <div class="severity-row">
-              <label class="severity-opt">
-                <input type="radio" name="severity" value="low" checked>
-                <span>Low</span>
-              </label>
-              <label class="severity-opt">
-                <input type="radio" name="severity" value="medium">
-                <span>Medium</span>
-              </label>
-              <label class="severity-opt">
-                <input type="radio" name="severity" value="high">
-                <span>High</span>
-              </label>
-              <label class="severity-opt critical">
-                <input type="radio" name="severity" value="critical">
-                <span>Critical</span>
-              </label>
-            </div>
-          </div>
+        <div class="form-block">
+          <label class="field-label">Title</label>
+          <input type="text" class="field-input" id="bugTitle" placeholder="Short description">
+        </div>
 
-        <button class="btn-primary" id="reportBtn">Submit Report</button>
+        <div class="form-block">
+          <label class="field-label">Steps to reproduce</label>
+          <textarea id="bugDesc" placeholder="1. I went to…&#10;2. I clicked…&#10;3. This happened…"></textarea>
+        </div>
 
-          <div class="result-box hidden" id="reportResult">
-            <div class="result-label">REPORT RECEIVED</div>
-            <div style="font-size: 1rem; letter-spacing: 0; color: var(--text);">Thank you. We will investigate this issue shortly.</div>
+        <div class="form-block">
+          <label class="field-label">Severity</label>
+          <div class="severity-row">
+            <label class="severity-opt">
+              <input type="radio" name="severity" value="low" checked>
+              <span>Low</span>
+            </label>
+            <label class="severity-opt">
+              <input type="radio" name="severity" value="medium">
+              <span>Medium</span>
+            </label>
+            <label class="severity-opt">
+              <input type="radio" name="severity" value="high">
+              <span>High</span>
+            </label>
+            <label class="severity-opt critical">
+              <input type="radio" name="severity" value="critical">
+              <span>Critical</span>
+            </label>
           </div>
         </div>
-      </section>
-    </div>
-  </main>
 
-  <div class="overlay" id="overlay"></div>
+        <button class="btn-primary" id="reportBtn">Submit report</button>
 
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
-  <script src="config.js"></script>
+        <div class="result-box hidden" id="reportResult">
+          <p class="result-label">Submitted</p>
+          <p style="font-size:14px;color:var(--text-2);line-height:1.6;">Thanks — we'll investigate this shortly.</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<div class="overlay" id="overlay"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+<script src="config.js"></script>
 <script src="script.js"></script>
 </body>
-
-
-<!--The -->
 </html>
