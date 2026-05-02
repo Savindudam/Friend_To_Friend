@@ -66,4 +66,5 @@ Decryption process :
  With this kind of database encryption method I will make a full working messaging app in the next update.
 
  ![alt text](image.png)
->>>>>>> c6bbded (changed the ui of the website)
+
+### I really fucked up the ui making a new one this ui was created because a new update is abt to income 
